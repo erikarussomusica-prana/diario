@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Diário Prana</title>
+<meta name="theme-color" content="#3a0b52">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Diário Prana">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  html,body{margin:0;height:100%;background:#3a0b52}
+  iframe{position:fixed;inset:0;width:100%;height:100%;border:0;background:#F6F2FA}
+  .msg{color:#fff;font:16px system-ui,sans-serif;text-align:center;padding:40vh 24px 0}
+</style>
+</head>
+<body>
+<script>
+  /* O link de cada aluno é .../?a=CHAVE. A chave fica guardada neste celular,
+     para o ícone da tela inicial abrir direto o diário certo. */
+  var APP = 'https://script.google.com/macros/s/AKfycbzAgZG3jnwJiKeUMTWSFhbieKL3iDy3nTIqASMZR1waSW8flh3aUXdMTSlh_joA848ToA/exec';
+  var q = new URLSearchParams(location.search), a = q.get('a');
+  try { if (a) localStorage.setItem('diario_a', a); else a = localStorage.getItem('diario_a'); } catch (e) {}
+  if (a && /^[\w-]{6,40}$/.test(a)) {
+    var f = document.createElement('iframe');
+    f.src = APP + '?a=' + encodeURIComponent(a);
+    f.title = 'Diário Prana';
+    f.allow = 'microphone; camera; clipboard-write; autoplay';
+    document.body.appendChild(f);
+  } else {
+    document.body.innerHTML = '<p class="msg">Abra o link do seu diário que a Prana mandou para você.</p>';
+  }
+</script>
+</body>
+</html>
