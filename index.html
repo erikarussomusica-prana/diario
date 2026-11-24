@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Diário Prana">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" id="mf" href="manifest.json">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
@@ -39,6 +39,27 @@
   var prof = null; try { prof = localStorage.getItem('diario_p'); } catch (e) {}
   if (ok(p) && ok(k) && !q.get('a')) src = APP + '?p=' + encodeURIComponent(p) + '&k=' + encodeURIComponent(k);
   else if (ok(a)) src = APP + '?a=' + encodeURIComponent(a);
+  function titulo(t) {
+    if (!t || typeof t !== 'string' || t.length > 60) return;
+    document.title = t;
+    var m = document.querySelector('meta[name="apple-mobile-web-app-title"]'); if (m) m.content = t;
+    try {
+      var base = location.href.split('?')[0].replace(/[^\/]*$/, '');
+      var man = { name: t, short_name: t.replace('Diário de ', 'Diário '), start_url: location.href, scope: base, display: 'standalone',
+        background_color: '#3a0b52', theme_color: '#3a0b52',
+        icons: [{ src: base + 'icon-192.png', sizes: '192x192', type: 'image/png' }, { src: base + 'icon-512.png', sizes: '512x512', type: 'image/png' },
+                { src: base + 'icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }] };
+      document.getElementById('mf').href = URL.createObjectURL(new Blob([JSON.stringify(man)], { type: 'application/manifest+json' }));
+    } catch (e) {}
+  }
+  var chaveT = 'diario_titulo_' + (ok(p) && ok(k) && !q.get('a') ? 'prof' : a);
+  try { titulo(localStorage.getItem(chaveT)); } catch (e) {}
+  window.addEventListener('message', function (ev) {
+    var d = ev.data;
+    if (!d || !d.diarioTitulo || !/(^|\.)(googleusercontent|google)\.com$/.test(new URL(ev.origin).hostname)) return;
+    titulo(d.diarioTitulo);
+    try { localStorage.setItem(chaveT, d.diarioTitulo); } catch (e) {}
+  });
   if (src) {
     var f = document.createElement('iframe');
     f.src = src;
