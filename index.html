@@ -72,7 +72,15 @@
       document.body.appendChild(v);
     }
   } else {
-    document.body.innerHTML = '<p class="msg">Abra o link do seu diário que a Prana mandou para você.</p>';
+    document.body.innerHTML = '<div class="msg"><p>Cole aqui o link do seu diário que a Prana mandou no WhatsApp:</p>' +
+      '<input id="lk" type="url" placeholder="https://erikarussomusica-prana.github.io/diario/?a=..." style="width:100%;max-width:420px;font:16px system-ui;padding:12px;border-radius:12px;border:0;margin:8px 0">' +
+      '<br><button id="ok" style="font:600 16px system-ui;padding:12px 22px;border-radius:12px;border:0;background:#E3C8FA;color:#2A0F3D">Abrir meu diário</button></div>';
+    document.getElementById('ok').onclick = function () {
+      var v = document.getElementById('lk').value, m = v.match(/[?&]a=([\w-]{3,40})/);
+      if (!m) { alert('Esse não parece ser o link do diário. Copie a mensagem da Prana de novo.'); return; }
+      try { localStorage.setItem('diario_a', m[1]); } catch (e) {}
+      location.href = './?a=' + m[1];
+    };
   }
 </script>
 </body>
